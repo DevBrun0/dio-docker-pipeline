@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App 1.0 - Gitlab CI/CD</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exibir Câmera</title>
 </head>
 <body>
-    <h1>App 1.0</h1>
-    <h2>Gitlab CI/CD</h2>
-    
+  <h1>Acessar e Mostrar Câmera</h1>
+  <video id="camera" autoplay playsinline></video>
+  <p id="status"></p>
+
+  <script>
+    // Função para acessar e mostrar a câmera
+    async function iniciarCamera() {
+      try {
+        // Solicita permissão para acessar a câmera
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        
+        // Define o stream de vídeo para o elemento de vídeo na página
+        const videoElement = document.getElementById('camera');
+        videoElement.srcObject = stream;
+
+        document.getElementById('status').textContent = "Câmera ativada com sucesso!";
+      } catch (error) {
+        console.error("Erro ao acessar a câmera:", error);
+        document.getElementById('status').textContent = "Erro ao acessar a câmera.";
+      }
+    }
+
+    // Chama a função para iniciar a câmera quando a página carrega
+    window.addEventListener("load", iniciarCamera);
+  </script>
 </body>
 </html>
