@@ -1,35 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exibir Câmera</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Compras</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Acessar e Mostrar Câmera</h1>
-  <video id="camera" autoplay playsinline></video>
-  <p id="status"></p>
 
-  <script>
-    // Função para acessar e mostrar a câmera
-    async function iniciarCamera() {
-      try {
-        // Solicita permissão para acessar a câmera
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    <h1>Sistema de Compras</h1>
+    <h2>Produtos Disponíveis</h2>
+    
+    <ul id="product-list" class="product-list">
+    </ul>
+
+    <h2>Carrinho de Compras</h2>
+    <ul id="cart-list" class="cart-list">
+    </ul>
+    
+    <h3>Total: R$<span id="total-price">0.00</span></h3>
+    <button id="checkout-btn">Finalizar Compra</button>
+
+    <script>
         
-        // Define o stream de vídeo para o elemento de vídeo na página
-        const videoElement = document.getElementById('camera');
-        videoElement.srcObject = stream;
+        // Produtos disponiveis
+        const products = [
+            { name: 'Produto A', price: 50 },
+            { name: 'Produto B', price: 30 },
+            { name: 'Produto C', price: 20 }
+        ];
+        
+        let cart = [];
 
-        document.getElementById('status').textContent = "Câmera ativada com sucesso!";
-      } catch (error) {
-        console.error("Erro ao acessar a câmera:", error);
-        document.getElementById('status').textContent = "Erro ao acessar a câmera.";
-      }
-    }
+        
+        function renderProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = ''; // Limpa a lista
 
-    // Chama a função para iniciar a câmera quando a página carrega
-    window.addEventListener("load", iniciarCamera);
-  </script>
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.classList.add('product-item');
+
+                li.innerHTML = `${product.name} - R$${product.price}
+                                <button onclick="addToCart('${product.name}')">Adicionar</button>`;
+
+                productList.appendChild(li);
+            });
+        }
+
+
+        function addToCart(productName) {
+            const product = products.find(p => p.name === productName);
+            if (product) {
+                cart.push(product);
+                renderCart();
+            }
+        }
+
+        
+        function renderCart() {
+            const cartList = document.getElementById('cart-list');
+            cartList.innerHTML = ''; // Limpa a lista
+
+            let total = 0;
+            
+            // Adiciona os itens do carrinho na lista e atualizando o total
+            cart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.classList.add('cart-item'); // Insere um nova lista ao carrinho
+
+                li.innerHTML = `${item.name} - R$${item.price}
+                                <button onclick="removeFromCart(${index})">Remover</button>`;
+
+                cartList.appendChild(li);
+                total += item.price; // Acumula o valor total somando o preço do item
+            });
+
+            document.getElementById('total-price').textContent = total.toFixed(2);
+        }
+
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('O carrinho está vazio!');
+            } else {
+                alert('Compra finalizada com sucesso!');
+                cart = []; // Limpa o carrinho
+                renderCart();
+            }
+        }
+
+        document.getElementById('checkout-btn').addEventListener('click', checkout); // Finaliza a compra
+
+        renderProducts();
+    </script>
+
 </body>
 </html>
